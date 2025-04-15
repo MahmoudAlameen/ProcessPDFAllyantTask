@@ -14,7 +14,7 @@ namespace ProcessPDFAllyantTask.Services
             var responseModel = new ApiResponse();
             foreach (var key in keywords)
             {
-                responseModel.TotalKeywordCounts[key] = 0;
+                responseModel.TotalKeywordCounts.Add(key, 0);
             }
 
             using var zipStream = file.OpenReadStream();

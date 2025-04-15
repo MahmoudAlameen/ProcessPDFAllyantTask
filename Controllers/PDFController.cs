@@ -21,27 +21,26 @@ public class PDFController : ControllerBase
     }
 
     [HttpPost("process-pdf")]
-    public async Task<IActionResult> ProcessPDFs( IFormFile file,  string keywords)
+    public async Task<IActionResult> ProcessPDFs(ProcessPDFDTO request)
     {
-        if (file == null || file.Length == 0)
+        if (request.file == null || request.file.Length == 0)
         {
             return BadRequest("No file uploaded.");
         }
+        // Check the file signature
+        using var reader = new BinaryReader(request.file.OpenReadStream());
+        var signatureBytes = reader.ReadBytes(4);
+        var isZip = signatureBytes[0] == 0x50 && signatureBytes[1] == 0x4B &&
+                    (signatureBytes[2] == 0x03 || signatureBytes[2] == 0x05 || signatureBytes[2] == 0x07) &&
+                    (signatureBytes[3] == 0x04 || signatureBytes[3] == 0x06 || signatureBytes[3] == 0x08);
 
-        KeywordRequest? keywordRequest;
+        if (!isZip)
+            return BadRequest("Uploaded file is not a valid ZIP archive.");
+
         try
         {
-            keywordRequest = JsonSerializer.Deserialize<KeywordRequest>(keywords, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            if (keywordRequest == null || keywordRequest.Keywords == null || keywordRequest.Keywords.Count == 0)
-                return BadRequest("No keywords provided.");
-
-            var result = PDFService.ProcessPDF(file, keywordRequest.Keywords);
+            var result = PDFService.ProcessPDF(request.file, request.Keywords);
             return Ok(result);
-
-
         }
         catch (Exception ex)
         {
