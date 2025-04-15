@@ -1,0 +1,6 @@
+@ProcessPDFAllyantTask_HostAddress = http://localhost:5286
+
+GET {{ProcessPDFAllyantTask_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
