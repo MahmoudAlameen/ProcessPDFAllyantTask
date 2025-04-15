@@ -21,7 +21,7 @@ public class PDFController : ControllerBase
     }
 
     [HttpPost("process-pdf")]
-    public async Task<IActionResult> ProcessPDFs([FromForm] IFormFile file, [FromForm] string keywords)
+    public async Task<IActionResult> ProcessPDFs( IFormFile file,  string keywords)
     {
         if (file == null || file.Length == 0)
         {
