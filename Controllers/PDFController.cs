@@ -38,15 +38,16 @@ public class PDFController : ControllerBase
             if (keywordRequest == null || keywordRequest.Keywords == null || keywordRequest.Keywords.Count == 0)
                 return BadRequest("No keywords provided.");
 
-            
+            var result = PDFService.ProcessPDF(file, keywordRequest.Keywords);
+            return Ok(result);
+
+
         }
         catch (Exception ex)
         {
             return BadRequest("Invalid keywords format: " + ex.Message);
         }
 
-        var result = PDFService.ProcessPDF(file, keywordRequest.Keywords);
 
-        return Ok(result);
     }
 }
